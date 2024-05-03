@@ -1,3 +1,17 @@
+/*
+This program implements the bubble sort algorithm to sort an array of integers in ascending order.
+
+    1. The swap function takes two pointers to integers a and b and swaps the values they point to.
+    2. The bubbleSort function takes an array arr, its size n, and a pointer count to store the number of swaps performed during the sorting process.
+        It uses nested loops to compare adjacent elements and swap them if they are in the wrong order. The outer loop iterates over the array from the 
+        beginning to the second-to-last element, and the inner loop iterates over the unsorted portion of the array. If an element is larger than the 
+        next element, they are swapped using the swap function, and the count is incremented.
+    3. The printArray function takes an array arr, its size size, and the count of swaps performed during sorting. It prints the elements of the sorted 
+        array and the number of swaps performed.
+    4. In the main function, an array arr of size 9 is initialized with the values {97, 16, 45, 63, 13, 22, 7, 58, 72}. The bubbleSort function is 
+        called with arr, its size n, and a variable count to store the number of swaps. The sorted array and the number of swaps performed are then 
+        printed using the printArray function.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 
