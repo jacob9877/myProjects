@@ -1,3 +1,26 @@
+/*
+This code implements a binary search algorithm to search for a value in a sorted array of integers. Here's a breakdown of what the code does:
+
+1. The search function takes an array of integers numbers, along with the lower and upper bounds (low and high) of the subarray being searched, and the value to be searched for. It performs a binary search on the subarray and returns the index of the value if found, or -1 if not found.
+2. The printArray function takes an array of integers numbers and its size sz, and prints the elements of the array.
+3. In the main function:
+    It opens a file named "input.txt" for reading.
+    It reads the number of inputs (numInputs) from the file.
+    For each input:
+
+        It reads the number of integers (countOfNums) in the current input.
+        It dynamically allocates memory for an array of integers (numArray) of size countOfNums.
+        It reads countOfNums integers from the file and stores them in numArray.
+        It prints the contents of numArray using the printArray function.
+        It calculates the average of the integers in numArray.
+        It calls the search function to find the index of the average value in numArray.
+        If the average value is found, it prints a message indicating the value and its index.
+        If the average value is not found, it prints a message indicating that the value does not exist in the array.
+        It frees the dynamically allocated memory for numArray.
+
+    After processing all inputs, it closes the input file.
+*/
+
 #include <stdio.h>
 
 // Function to perform binary search on a sorted array
