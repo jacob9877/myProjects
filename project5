@@ -1,3 +1,11 @@
+/*
+This code defines a simple linked list data structure with a node struct that contains a character and a pointer to the next node. It provides the following functions:
+
+1. length(node *head): Returns the number of nodes in the linked list.
+2. toCString(node *head): Converts the linked list into a C string and returns a dynamically allocated char array containing the string.
+3. insertChar(node **pHead, char c): Inserts a character c at the end of the linked list.
+4. deleteList(node **pHead): Deletes all nodes in the linked list and frees the allocated memory.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
