@@ -1,6 +1,13 @@
+/*
+This is a simple text translation program that uses the RapidAPI Text Translator API to translate text from one language to another. 
+It also displays the translated text in a graphical user interface (GUI) window using the Tkinter library.
+*/
 import requests
 import tkinter as tk
 
+/*
+These lines import the necessary libraries: requests for making HTTP requests to the translation API, and tkinter for creating the GUI window.
+*/
 def print_supported_languages():
     print("""
 | Language Name        | Language Code |
@@ -120,7 +127,10 @@ def print_supported_languages():
 
 print_supported_languages()
 
-
+/*
+This function prints a list of supported languages and their corresponding language codes. It's called at the beginning of the program to 
+provide information to the user.
+*/
 def translate_text():
     url = "https://text-translator2.p.rapidapi.com/translate"
 
