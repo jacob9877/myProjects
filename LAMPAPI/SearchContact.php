@@ -1,5 +1,7 @@
 <?php
   header('Content-Type: application/json');
+
+  // Database connection parameters
   $servername = "localhost";
   $username = "TheBeast";
   $password = "WeLoveCOP4331";
@@ -10,35 +12,35 @@
   
   // Checks connection
   if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
+      die(json_encode(['message' => 'Connection failed: ' . $conn->connect_error]));
   }
-  
-  session_start();
-  if (!isset($_SESSION['userId'])) {
-      echo json_encode(['message' => 'User not logged in']);
-      exit;
-  }
-  $user_id = $_SESSION['userId'];
+
+  // Retrieves the search query from GET request
   $search = $_GET['query'];
-  
-  $query = "SELECT * FROM Contacts WHERE UserID = '$user_id' AND (Name LIKE '%$search%' OR Phone LIKE '%$search%' OR Email LIKE '%$se>
-  $result = $conn->query($query);
-  
-  if (!$result) {
-      echo json_encode(['message' => 'Query failed: ' . $conn->error]);
-      exit;
-  }
-  
-  $contacts = [];
-  if ($result->num_rows > 0) {
-      while($row = $result->fetch_assoc()) {
-          $contacts[] = $row;
+
+  // Prepares the SQL statement
+  $stmt = $conn->prepare("SELECT * FROM Contacts WHERE Name LIKE ? OR Phone LIKE ? OR Email LIKE ?");
+  $likeSearch = "%$search%";
+  $stmt->bind_param("sss", $likeSearch, $likeSearch, $likeSearch);
+
+  // Executes the statement
+  if ($stmt->execute()) {
+      $result = $stmt->get_result();
+      $contacts = [];
+
+      if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+              $contacts[] = $row;
+          }
+          echo json_encode($contacts);
+      } else {
+          echo json_encode(['message' => 'No contacts found']);
       }
   } else {
-      echo json_encode(['message' => 'No contacts found']);
-      exit;
+      echo json_encode(['message' => 'Query failed: ' . $stmt->error]);
   }
-  
-  echo json_encode($contacts);
+
+  // Closes the statement and connection
+  $stmt->close();
   $conn->close();
 ?>
