@@ -1,31 +1,41 @@
 <?php
-        header('Content-Type: application/json');
-        $servername = "localhost";
-        $username = "TheBeast";
-        $password = "WeLoveCOP4331";
-        $dbname = "COP4331";
+  header('Content-Type: application/json');
+  
+  // Database connection parameters
+  $servername = "localhost";
+  $username = "TheBeast";
+  $password = "WeLoveCOP4331";
+  $dbname = "COP4331";
 
-        // Creates connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
 
-        // Checks connection
-        if ($conn->connect_error) {
-         die("Connection failed: " . $conn->connect_error);
-        }
+  // Check connection
+  if ($conn->connect_error) {
+      die(json_encode(['message' => 'Connection failed: ' . $conn->connect_error]));
+  }
 
-        session_start();
-        $id = $_GET['id'];
-        $data = json_decode(file_get_contents('php://input'), true);
-        $name = $data['name'];
-        $phone = $data['phone'];
-        $email = $data['email'];
+  // Retrieve the ID from GET request
+  $id = $_GET['id'];
 
-        $query = "UPDATE Contacts SET Name = '$name', Phone = '$phone', Email = '$email' WHERE ID = '$id' AND UserID = '{$_SESSION[>
-        if ($conn->query($query) === TRUE) {
-         echo json_encode(['message' => 'Contact updated successfully']);
-        } else {
-        echo json_encode(['message' => 'Failed to update contact']);
-        }
+  // Get the data from the request body
+  $data = json_decode(file_get_contents('php://input'), true);
+  $name = $data['name'];
+  $phone = $data['phone'];
+  $email = $data['email'];
 
-        $conn->close();
+  // Prepare and execute the SQL statement
+  $stmt = $conn->prepare("UPDATE Contacts SET Name = ?, Phone = ?, Email = ? WHERE ID = ?");
+  $stmt->bind_param("sssi", $name, $phone, $email, $id);
+
+  // Execute the statement and check if successful
+  if ($stmt->execute()) {
+      echo json_encode(['message' => 'Contact updated successfully']);
+  } else {
+      echo json_encode(['message' => 'Failed to update contact']);
+  }
+
+  // Close the statement and connection
+  $stmt->close();
+  $conn->close();
 ?>
