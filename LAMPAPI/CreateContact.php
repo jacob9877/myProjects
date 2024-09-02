@@ -25,6 +25,14 @@ function returnWithInfo($id)
 
 $inData = getRequestInfo();
 
+// Trim whitespace from the name field
+$name = trim($inData["name"]);
+
+if (empty($name)) {
+    returnWithError("Name cannot be empty");
+    exit();
+}
+
 $conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
 
 if( $conn->connect_error )
@@ -33,8 +41,12 @@ if( $conn->connect_error )
 }
 else
 {
-    $stmt = $conn->prepare("INSERT INTO Contacts (Name, Phone, Email, UserID) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $inData["name"], $inData["phone"], $inData["email"], $inData["userId"]);
+    $dateCreated = date("Y-m-d H:i:s");
+
+    $stmt = $conn->prepare("INSERT INTO Contacts (Name, Phone, Email, UserID, DateCreated) VALUES (?, ?, ?, ?, ?)");
+
+    $stmt->bind_param("sssis", $name, $inData["phone"], $inData["email"], $inData["userId"], $dateCreated);
+
     $stmt->execute();
 
     if ($stmt->affected_rows > 0)
