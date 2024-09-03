@@ -15,12 +15,13 @@
       die(json_encode(['message' => 'Connection failed: ' . $conn->connect_error]));
   }
 
-  // Retrieves the search query from GET request
+  // Retrieves the search query user ID from GET request
   $search = $_GET['query'];
+  $userID = $_GET['userID'];
 
   // Prepares the SQL statement
   $stmt = $conn->prepare("SELECT * FROM Contacts WHERE Name LIKE ? OR Phone LIKE ? OR Email LIKE ?");
-  $likeSearch = "$search%"; // Adjusted to search for contacts starting with the search query
+  $likeSearch = "%$search%"; 
   $stmt->bind_param("sss", $likeSearch, $likeSearch, $likeSearch);
 
   // Executes the statement
