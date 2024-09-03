@@ -20,7 +20,7 @@
 
   // Prepares the SQL statement
   $stmt = $conn->prepare("SELECT * FROM Contacts WHERE Name LIKE ? OR Phone LIKE ? OR Email LIKE ?");
-  $likeSearch = "%$search%";
+  $likeSearch = "$search%"; // Adjusted to search for contacts starting with the search query
   $stmt->bind_param("sss", $likeSearch, $likeSearch, $likeSearch);
 
   // Executes the statement
