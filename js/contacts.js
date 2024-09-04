@@ -97,7 +97,7 @@ function displayContactDetails(contact) {
       </div>
       <div class="contact-details-item">
         <h3>Phone</h3>
-        <p>${contact.phone}</p>
+        <p>${contact.Phone}</p>
       </div>
       <div class="contact-details-item">
         <h3>Email</h3>
@@ -179,7 +179,7 @@ function editContact(contact) {
       </div>
       <div class="contact-details-item">
         <h3>Phone</h3>
-        <input type="text" id="edit-phone" value="${contact.phone}" />
+        <input type="text" id="edit-phone" value="${contact.Phone}" />
       </div>
       <div class="contact-details-item">
         <h3>Email</h3>
