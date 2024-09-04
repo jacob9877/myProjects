@@ -31,7 +31,7 @@ if ($conn->connect_error)
 }
 else
 {
-    $stmt = $conn->prepare("SELECT ID, Name, Phone, Email FROM Contacts WHERE UserID=?");
+    $stmt = $conn->prepare("SELECT ID, Name, Phone, Email, DateCreated FROM Contacts WHERE UserID=?");
     $stmt->bind_param("i", $inData["userId"]);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -43,10 +43,11 @@ else
             $searchResults .= ",";
         }
         $searchResults .= json_encode([
-            "id" => $row["ID"],
-            "name" => $row["Name"],
-            "phone" => $row["Phone"],
-            "email" => $row["Email"]
+            "ID" => $row["ID"],
+            "Name" => $row["Name"],
+            "Phone" => $row["Phone"],
+            "Email" => $row["Email"],
+	    "DateCreated" => $row["DateCreated"]
         ]);
     }
     if ($searchResults == "")

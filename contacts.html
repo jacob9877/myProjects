@@ -50,7 +50,10 @@
           <input
             type="text"
             class="search-input"
+            id="search-input"
             placeholder="Search Contacts"
+            onkeypress="searchContacts()"
+            onchange="searchContacts()"
           />
           <button class="search-button">
             <svg

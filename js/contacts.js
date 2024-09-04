@@ -15,6 +15,24 @@ function getContacts() {
     });
 }
 
+function searchContacts() {
+  let userId = localStorage.getItem("userId");
+  let searchTerm = document.getElementById("search-input").value;
+  fetch(
+    `http://cop4331-project.online/LAMPAPI/SearchContact.php?userId=${userId}&query=${searchTerm}`,
+    {
+      method: "GET",
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      displayContacts(data);
+    })
+    .catch((error) => {
+      console.error("Error searching contacts:", error);
+    });
+}
+
 function displayContacts(contacts) {
   const contactList = document.querySelector(".contact-list");
   contactList.innerHTML = "";
@@ -24,10 +42,10 @@ function displayContacts(contacts) {
     contactItem.className = "contact-item";
     contactItem.innerHTML = `
         <div class="contact-text">
-          <h3>${contact.name}</h3>
-          <p>${contact.email}</p>
+          <h3>${contact.Name}</h3>
+          <p>${contact.Email}</p>
         </div>
-        <button class="contact-item-button delete-button" data-id="${contact.id}">
+        <button class="contact-item-button delete-button" data-id="${contact.ID}">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-item-button-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
           </svg>
@@ -40,7 +58,7 @@ function displayContacts(contacts) {
   document.querySelectorAll(".delete-button").forEach((button) => {
     button.addEventListener("click", (e) => {
       e.stopPropagation();
-      deleteContact(button.dataset.id);
+      deleteContact(button.dataset.ID);
     });
   });
 }
@@ -53,7 +71,7 @@ function displayContactDetails(contact) {
     <div class="contact-details-header">
       <div class="contact-details-header-title">
         <p>Your Contacts</p>
-        <h3>${contact.name}</h3>
+        <h3>${contact.Name}</h3>
       </div>
       <div class="contact-details-header-buttons">
         <button class="contact-details-button edit-button" data-contact='${JSON.stringify(
@@ -64,7 +82,7 @@ function displayContactDetails(contact) {
         </svg>      
         </button>
         <button class="contact-item-button delete-button" data-id="${
-          contact.id
+          contact.ID
         }">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-item-button-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -75,7 +93,7 @@ function displayContactDetails(contact) {
     <div class="contact-details-body">
       <div class="contact-details-item">
         <h3>Full Name</h3>
-        <p>${contact.name}</p>
+        <p>${contact.Name}</p>
       </div>
       <div class="contact-details-item">
         <h3>Phone</h3>
@@ -83,7 +101,11 @@ function displayContactDetails(contact) {
       </div>
       <div class="contact-details-item">
         <h3>Email</h3>
-        <p>${contact.email}</p>
+        <p>${contact.Email}</p>
+      </div>
+      <div class="contact-details-item">
+        <h3>Date Created</h3>
+        <p>${contact.DateCreated}</p>
       </div>
     </div>
   `;
@@ -95,7 +117,7 @@ function displayContactDetails(contact) {
   document
     .querySelector(".delete-button")
     .addEventListener("click", function () {
-      deleteContact(this.dataset.id);
+      deleteContact(this.dataset.ID);
     });
 }
 
@@ -135,15 +157,15 @@ function editContact(contact) {
     <div class="contact-details-header">
       <div class="contact-details-header-title">
         <p>Edit Contact</p>
-        <h3>${contact.name}</h3>
+        <h3>${contact.Name}</h3>
       </div>
       <div class="contact-details-header-buttons">
-        <button class="contact-details-button save-button" data-id="${contact.id}">
+        <button class="contact-details-button save-button" data-id="${contact.ID}">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-details-button-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </button>
-        <button class="contact-item-button cancel-button" data-id="${contact.id}">
+        <button class="contact-item-button cancel-button" data-id="${contact.ID}">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-item-button-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -153,7 +175,7 @@ function editContact(contact) {
     <div class="contact-details-body">
       <div class="contact-details-item">
         <h3>Full Name</h3>
-        <input type="text" id="edit-name" value="${contact.name}" />
+        <input type="text" id="edit-name" value="${contact.Name}" />
       </div>
       <div class="contact-details-item">
         <h3>Phone</h3>
@@ -161,19 +183,23 @@ function editContact(contact) {
       </div>
       <div class="contact-details-item">
         <h3>Email</h3>
-        <input type="text" id="edit-email" value="${contact.email}" />
+        <input type="text" id="edit-email" value="${contact.Email}" />
+      </div>
+      <div class="contact-details-item-hidden">
+        <h3>Date Created</h3>
+        <input type="text" id="edit-date" value="${contact.DateCreated}" />
       </div>
     </div>
   `;
 
   document.querySelector(".save-button").addEventListener("click", function () {
-    saveContact(this.dataset.id);
+    saveContact(this.dataset.ID);
   });
 
   document
     .querySelector(".cancel-button")
     .addEventListener("click", function () {
-      cancelEdit(this.dataset.id);
+      cancelEdit(this.dataset.ID);
     });
 }
 
@@ -181,6 +207,7 @@ function saveContact(contactId) {
   const name = document.getElementById("edit-name").value;
   const phone = document.getElementById("edit-phone").value;
   const email = document.getElementById("edit-email").value;
+  const dateCreated = document.getElementById("edit-date").value;
 
   fetch(
     `http://cop4331-project.online/LAMPAPI/UpdateContact.php?id=${contactId}`,
@@ -195,7 +222,7 @@ function saveContact(contactId) {
     .then((response) => response.json())
     .then((data) => {
       getContacts();
-      displayContactDetails({ id: contactId, name, phone, email });
+      displayContactDetails({ id: contactId, name, phone, email, dateCreated });
     })
     .catch((error) => {
       console.error("Error saving contact:", error);
@@ -212,7 +239,7 @@ function cancelEdit(contactId) {
   })
     .then((response) => response.json())
     .then((data) => {
-      const contact = data.results.find((c) => c.id === contactId);
+      const contact = data.results.find((c) => c.ID === contactId);
       if (contact) {
         displayContactDetails(contact);
       } else {

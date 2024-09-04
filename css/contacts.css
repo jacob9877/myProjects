@@ -224,6 +224,10 @@ body, html {
     margin-bottom: 20px;
 }
 
+.contact-details-item-hidden{
+    display: none !important;
+}
+
 .contact-details-item h3 {
     font-size: 14px;
     color: #666;
