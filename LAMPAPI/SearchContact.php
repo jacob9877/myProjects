@@ -1,47 +1,86 @@
 <?php
-  header('Content-Type: application/json');
 
-  // Database connection parameters
-  $servername = "localhost";
-  $username = "TheBeast";
-  $password = "WeLoveCOP4331";
-  $dbname = "COP4331";
-  
-  // Creates connection
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  
-  // Checks connection
-  if ($conn->connect_error) {
-      die(json_encode(['message' => 'Connection failed: ' . $conn->connect_error]));
-  }
+$inData = getRequestInfo();
 
-  // Retrieves the search query user ID from GET request
-  $search = $_GET['query'];
-  $userID = $_GET['userID'];
+// Default response values
+$searchResults = [];
+$searchCount = 0;
 
-  // Prepares the SQL statement
-  $stmt = $conn->prepare("SELECT * FROM Contacts WHERE Name LIKE ? OR Phone LIKE ? OR Email LIKE ?");
-  $likeSearch = "%$search%"; 
-  $stmt->bind_param("sss", $likeSearch, $likeSearch, $likeSearch);
+$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331");
 
-  // Executes the statement
-  if ($stmt->execute()) {
-      $result = $stmt->get_result();
-      $contacts = [];
+if ($conn->connect_error) 
+{
+    returnWithError($conn->connect_error);
+} 
+else
+{
+    // Prepare the SQL statement for searching contacts
+    $stmt = $conn->prepare("SELECT * FROM Contacts WHERE (Name LIKE ? OR Phone LIKE ? OR Email LIKE ?) AND UserID = ?");
+    if (!$stmt) {
+        returnWithError("Prepare failed: " . $conn->error);
+    }
 
-      if ($result->num_rows > 0) {
-          while ($row = $result->fetch_assoc()) {
-              $contacts[] = $row;
-          }
-          echo json_encode($contacts);
-      } else {
-          echo json_encode(['message' => 'No contacts found']);
-      }
-  } else {
-      echo json_encode(['message' => 'Query failed: ' . $stmt->error]);
-  }
+    $likeSearch = "%" . $inData["query"] . "%";
+    $stmt->bind_param("ssss", $likeSearch, $likeSearch, $likeSearch, $inData["userId"]);
 
-  // Closes the statement and connection
-  $stmt->close();
-  $conn->close();
+    if (!$stmt->execute()) {
+        returnWithError("Execute failed: " . $stmt->error);
+    }
+    
+    $result = $stmt->get_result();
+    
+    // Build the response data
+    while ($row = $result->fetch_assoc())
+    {
+        $searchResults[] = $row;
+    }
+    
+    if (empty($searchResults))
+    {
+        returnWithError("No Records Found");
+    }
+    else
+    {
+        returnWithInfo($searchResults);
+    }
+    
+    $stmt->close();
+    $conn->close();
+}
+
+function getRequestInfo()
+{
+    $json = file_get_contents('php://input');
+    if (empty($json)) {
+        return ['error' => 'No input data'];
+    }
+    
+    $data = json_decode($json, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ['error' => 'Invalid JSON: ' . json_last_error_msg()];
+    }
+    
+    return $data;
+}
+
+function sendResultInfoAsJson($obj)
+{
+    header('Content-type: application/json');
+    echo json_encode($obj);
+}
+
+function returnWithError($err)
+{
+    $retValue = ['error' => $err];
+    sendResultInfoAsJson($retValue);
+    error_log("Error: " . $err); // Log error to server logs
+}
+
+function returnWithInfo($searchResults)
+{
+    $retValue = ['results' => $searchResults, 'error' => 'None'];
+    sendResultInfoAsJson($retValue);
+    error_log("Results: " . print_r($searchResults, true)); // Log results to server logs
+}
+
 ?>
