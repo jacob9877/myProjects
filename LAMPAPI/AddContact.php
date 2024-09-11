@@ -15,9 +15,6 @@
       die(json_encode(['message' => 'Connection failed: ' . $conn->connect_error]));
   }
 
-  // Retrieves the ID from GET request
-  $id = $_GET['id'];
-
   // Prepares and executes the SQL statement
   $sql = "INSERT INTO Contacts (Name, Phone, Email, UserID, DateCreated) VALUES (?, ?, ?, ?, ?)";
   $stmt->bind_param("i", $id);
