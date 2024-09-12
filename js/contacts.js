@@ -148,6 +148,28 @@ function deleteContact(contactId) {
     });
 }
 
+function addContact(id: contactId, name, phone, email, dateCreated) {
+	fetch(
+	  `http://cop4331-project.online/LAMPAPI/CreateContact.php`,
+		  {
+			  method: "POST",
+			  headers:  {
+				  "Content-Type": "application/json",
+			  },
+			  body: JSON.stringify({userID, name, phone, email }),
+		  }
+		  )
+		  
+		  .then((response) => response.json())
+		  .then((data) => {
+			  displayContactDetailsEmpty({id: contactId, name, phone, email, dateCreated});
+			  getContacts();
+		  })
+		  .catch((error) => {
+			  console.error("Error adding contact:", error);
+		  });
+}
+
 function editContact(contact) {
   const contactDetails = document.querySelector(".contact-details");
 
