@@ -18,15 +18,13 @@ function getContacts() {
 function searchContacts() {
   let userId = localStorage.getItem("userId");
   let searchTerm = document.getElementById("search-input").value;
-  fetch(
-    `http://cop4331-project.online/LAMPAPI/SearchContact.php?userId=${userId}&query=${searchTerm}`,
-    {
-      method: "GET",
-    }
-  )
+  fetch(`http://cop4331-project.online/LAMPAPI/SearchContact.php`, {
+    method: "POST",
+    body: JSON.stringify({ userId, query: searchTerm }),
+  })
     .then((response) => response.json())
     .then((data) => {
-      displayContacts(data);
+      displayContacts(data.results);
     })
     .catch((error) => {
       console.error("Error searching contacts:", error);
