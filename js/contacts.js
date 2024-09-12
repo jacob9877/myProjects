@@ -56,7 +56,7 @@ function displayContacts(contacts) {
   document.querySelectorAll(".delete-button").forEach((button) => {
     button.addEventListener("click", (e) => {
       e.stopPropagation();
-      deleteContact(button.dataset.ID);
+      deleteContact(button.dataset.id);
     });
   });
 }
@@ -115,7 +115,7 @@ function displayContactDetails(contact) {
   document
     .querySelector(".delete-button")
     .addEventListener("click", function () {
-      deleteContact(this.dataset.ID);
+      deleteContact(this.dataset.id);
     });
 }
 
@@ -148,26 +148,89 @@ function deleteContact(contactId) {
     });
 }
 
-function addContact(id: contactId, name, phone, email, dateCreated) {
-	fetch(
-	  `http://cop4331-project.online/LAMPAPI/CreateContact.php`,
-		  {
-			  method: "POST",
-			  headers:  {
-				  "Content-Type": "application/json",
-			  },
-			  body: JSON.stringify({userID, name, phone, email }),
-		  }
-		  )
-		  
-		  .then((response) => response.json())
-		  .then((data) => {
-			  displayContactDetailsEmpty({id: contactId, name, phone, email, dateCreated});
-			  getContacts();
-		  })
-		  .catch((error) => {
-			  console.error("Error adding contact:", error);
-		  });
+function buildContact() {
+  const contactDetails = document.querySelector(".contact-details");
+
+  contactDetails.innerHTML = `
+    <div class="contact-details-header">
+      <div class="contact-details-header-title">
+        <p>Contacts</p>
+        <h3>Create Contact</h3>
+      </div>
+      <div class="contact-details-header-buttons">
+        <button class="contact-details-button save-button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-details-button-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        </button>
+        <button class="contact-item-button cancel-button"">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-item-button-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="contact-details-body">
+      <div class="contact-details-item">
+        <h3>Full Name</h3>
+        <input type="text" id="create-name" />
+      </div>
+      <div class="contact-details-item">
+        <h3>Phone</h3>
+        <input type="text" id="create-phone" />
+      </div>
+      <div class="contact-details-item">
+        <h3>Email</h3>
+        <input type="text" id="create-email" />
+      </div>
+
+    </div>
+  `;
+
+  document.querySelector(".save-button").addEventListener("click", function () {
+    const name = document.getElementById("create-name").value;
+    const phone = document.getElementById("create-phone").value;
+    const email = document.getElementById("create-email").value;
+    const dateCreated = new Date().toLocaleDateString();
+
+    addContact(
+      parseInt(localStorage.getItem("userId")),
+      name,
+      phone,
+      email,
+      dateCreated
+    );
+  });
+
+  document
+    .querySelector(".cancel-button")
+    .addEventListener("click", function () {
+      cancelEdit(this.dataset.ID);
+    });
+}
+
+function addContact(userId, name, phone, email, dateCreated) {
+  fetch(`http://cop4331-project.online/LAMPAPI/CreateContact.php`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, name, phone, email }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      displayContactDetails({
+        ID: data.id,
+        Name: name,
+        Phone: phone,
+        Email: email,
+        DateCreated: dateCreated,
+      });
+      getContacts();
+    })
+    .catch((error) => {
+      console.error("Error adding contact:", error);
+    });
 }
 
 function editContact(contact) {
@@ -213,7 +276,7 @@ function editContact(contact) {
   `;
 
   document.querySelector(".save-button").addEventListener("click", function () {
-    saveContact(this.dataset.ID);
+    saveContact(contact.ID);
   });
 
   document
@@ -242,7 +305,13 @@ function saveContact(contactId) {
     .then((response) => response.json())
     .then((data) => {
       getContacts();
-      displayContactDetails({ id: contactId, name, phone, email, dateCreated });
+      displayContactDetails({
+        ID: contactId,
+        Name: name,
+        Phone: phone,
+        Email: email,
+        DateCreated: dateCreated,
+      });
     })
     .catch((error) => {
       console.error("Error saving contact:", error);
@@ -255,7 +324,7 @@ function cancelEdit(contactId) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId: 2 }),
+    body: JSON.stringify({ userId: window.localStorage.getItem("userId") }),
   })
     .then((response) => response.json())
     .then((data) => {

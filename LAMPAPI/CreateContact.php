@@ -73,10 +73,11 @@ else
     $nextUserId = ($row['maxUserId'] !== null) ? $row['maxUserId'] + 1 : 1; // Increment the max userId by 1
     $stmt->close();
 
-    // Insert the new contact with the next available userId
+    $userId = $inData["userId"];
+
     $dateCreated = date("Y-m-d H:i:s"); // Get current date and time
     $stmt = $conn->prepare("INSERT INTO Contacts (UserID, Name, Phone, Email, DateCreated) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("issss", $nextUserId, $name, $inData["phone"], $inData["email"], $dateCreated);
+    $stmt->bind_param("issss", $userId, $name, $inData["phone"], $inData["email"], $dateCreated);
 
     $stmt->execute();
 
